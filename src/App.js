@@ -8,11 +8,11 @@ export const ACTIONS = {
   CHOOSE_OPERATION: 'choose-operation',
   CLEAR: 'clear',
   DELETE_DIGIT: 'delete-digit',
-  EVALUATE: 'evaluate'
+  EVALUATE: 'evaluate',
 }
 
 function reducer(state, { type, payload }) {
-  switch(type) {
+  switch (type) {
     case ACTIONS.ADD_DIGIT:
       if (state.overwrite) {
         return {
@@ -27,6 +27,7 @@ function reducer(state, { type, payload }) {
       if (payload.digit === "." && state.currentOperand.includes(".")) {
         return state
       }
+
       return {
         ...state,
         currentOperand: `${state.currentOperand || ""}${payload.digit}`,
@@ -35,12 +36,14 @@ function reducer(state, { type, payload }) {
         if (state.currentOperand == null && state.previousOperand == null) {
           return state
         }
+
         if (state.currentOperand == null) {
           return {
             ...state,
             operation: payload.operation,
           }
         }
+
         if (state.previousOperand == null) {
           return {
             ...state,
@@ -63,7 +66,7 @@ function reducer(state, { type, payload }) {
           return {
             ...state,
             overwrite: false,
-            currentOperand: null
+            currentOperand: null,
           }
         }
         if (state.currentOperand == null) return state
@@ -72,11 +75,11 @@ function reducer(state, { type, payload }) {
         }
         return {
           ...state,
-          currentOperand: state.currentOperand.slice(0, -1)
+          currentOperand: state.currentOperand.slice(0, -1),
         }
       case ACTIONS.EVALUATE:
         if (
-           state.operation ==null ||
+           state.operation == null ||
            state.currentOperand == null ||
            state.previousOperand == null
           ) {
@@ -104,14 +107,24 @@ function evaluate({ currentOperand, previousOperand, operation }) {
     case "-":
       computation = prev - current
       break
-      case "÷":
-      computation = prev / current
-      break
     case "*":
       computation = prev * current
       break
+    case "÷":
+      computation = prev / current
+      break
   }
   return computation.toString()
+}
+
+const INTEGER_FORMATTER = Intl.NumberFormat("en-us", {
+  maximumFractionDigits: 0,
+})
+function formatOperand(operand) {
+  if (operand == null) return
+  const [integer, decimal] = operand.split('.')
+  if (decimal == null) return INTEGER_FORMATTER.format(integer)
+  return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
 
 function App() {
@@ -124,8 +137,8 @@ function App() {
   return (
     <div className="calculator-grid">
       <div className="output">
-        <div className="previous-operand">{previousOperand} {operation}</div>
-        <div className="current-operand">{currentOperand}</div>
+        <div className="previous-operand">{formatOperand(previousOperand)} {operation}</div>
+        <div className="current-operand">{formatOperand(currentOperand)}</div>
       </div>
       <button className="span-two" onClick={() => dispatch({ type: ACTIONS.CLEAR })}>AC</button>
       <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>DEL</button>
@@ -150,3 +163,5 @@ function App() {
 }
 
 export default App;
+
+
