@@ -117,12 +117,12 @@ function evaluate({ currentOperand, previousOperand, operation }) {
   return computation.toString()
 }
 
-const INTEGER_FORMATTER = Intl.NumberFormat("en-us", {
+const INTEGER_FORMATTER = new Intl.NumberFormat("en-us", {
   maximumFractionDigits: 0,
 })
 function formatOperand(operand) {
   if (operand == null) return
-  const [integer, decimal] = operand.split('.')
+  const [integer, decimal] = operand.split(".")
   if (decimal == null) return INTEGER_FORMATTER.format(integer)
   return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
@@ -163,5 +163,3 @@ function App() {
 }
 
 export default App;
-
-
